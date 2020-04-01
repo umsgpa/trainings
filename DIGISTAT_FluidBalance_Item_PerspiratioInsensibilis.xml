@@ -1,0 +1,86 @@
+<Script>
+	<Autorun>false</Autorun>
+	<Parameters>
+		<Parameter>
+			<Key>@PatientWeight</Key>
+			<DBType>float</DBType>
+			<Label>Patient Weight</Label>
+			<SQL><![CDATA[ 
+				SELECT CAST(AVG(CAST(ddp2.dsp_Value AS DECIMAL(10, 2))) AS DECIMAL(10, 2)) dsp_Value
+				FROM DASDataParameter DDP1
+				INNER JOIN DASDataParameter DDP2
+					ON DDP1.dsh_ID = DDP2.dsh_ID
+						AND DDP1.ad_ID = ddp2.ad_ID
+						AND DDP1.par_ID = 8007
+						AND DDP2.par_ID = 13
+				INNER JOIN DASDataHeader DDH
+					ON DDP1.dsh_ID = DDH.dsh_ID
+				WHERE DDH.dsh_ID = (
+						SELECT MAX(x.dsh_ID)
+						FROM DASDataHeader x
+						WHERE DDH.IDBed = x.IDBed
+						)
+					AND DDP1.uom_ID BETWEEN 9039 AND 9071
+					AND DDH.dsh_pa_id = {PatientID}
+					AND DATEDIFF(mi, DDH.dsh_AcquisitionTime, GETDATE()) < 5
+			]]></SQL>
+		</Parameter>
+		
+		
+		<Parameter>
+			<Key>@IntubatedHours</Key>
+			<DBType>float</DBType>
+			<Label>Intubated hours:</Label>
+			<SQL />
+		</Parameter>
+		<Parameter>
+			<Key>@NotIntubatedHours</Key>
+			<DBType>float</DBType>
+			<Label>Not intubated hours:</Label>
+			<SQL />
+		</Parameter>
+		<Parameter>
+			<Key>@Sweat</Key>
+			<DBType>nvarchar(10)</DBType>
+			<Label>Sweat</Label>
+			<SQL><![CDATA[ 
+                        SELECT 'SCARCE' AS Result
+                            , 1 AS [Index]
+                        UNION
+                        SELECT 'MEDIUM' AS Result
+                            , 2 AS [Index]
+                        UNION
+                        SELECT 'SERIOUS' AS Result
+                            , 3 AS [Index]
+                        ORDER BY [Index] 
+        ]]></SQL>
+		</Parameter>
+		<Parameter>
+			<Key>@FeverHours3840</Key>
+			<DBType>float</DBType>
+			<Label>Hours with fever &gt;38°C and &lt;=40°C:</Label>
+			<SQL />
+		</Parameter>
+		<Parameter>
+			<Key>@FeverHours40</Key>
+			<DBType>float</DBType>
+			<Label>Hours with fever &gt;40°C:</Label>
+			<SQL />
+		</Parameter>
+	</Parameters>
+	<Query>
+
+declare @C1 as float
+declare @C2 as float
+declare @C3 as float
+declare @C4 as float
+declare @C5 as float
+
+set @C1 = (select @PatientWeight * @IntubatedHours * 0.4)
+set @C2 = (select @PatientWeight * @NotIntubatedHours * 0.6)
+set @C3 = (select case @Sweat when 'SCARCE' then 300 when 'MEDIUM' then 600 when 'SERIOUS' then 1000 end)
+set @C4 = (select @PatientWeight * @FeverHours3840 * 0.2)
+set @C5 = (select @PatientWeight * @FeverHours40 * 0.4)
+
+select @C1 + @C2 + @C3 + @C4 + @C5 as Result</Query>
+</Script>
