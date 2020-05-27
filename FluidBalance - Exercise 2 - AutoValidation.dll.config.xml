@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<appSettings>
+		<!--The Message center address-->
+		<add key="MessageCenter" value=""/>
+		<!--The Message center Instance-->
+		<add key="MessageCenterInstance" value=""/>
+
+		<!--Auto Validation Times -->
+		<add key="AutoValidationTimes" value=""/>
+
+		<!--Auto Validation Location (NOT MANDATORY), indicates that the autovalidation must be executed only on a specific location -->
+		<add key="AutoValidationLocation" value=""/>
+
+
+		<!-- Used to  retrieve the patientrefs to perform autovalidation  -->
+		<add key="AutoValidationQueryPatient" value=""/>
+
+		<!-- Launch a StoredProcedure  -->
+		<add key="StoredProcedure" value=""/>
+
+		<!--Email configuration-->	 
+		<!-- An email will be send when one of the error code has been catch. i.e. 10;20;40-->
+		<add key="SendMailOnLogCode" value=""/>
+		<!-- List of destination email address, separated by ;-->
+		<add key="SendMailDestinations" value=""/>
+		<!-- -->
+		<add key="SendMailFromAddress" value=""/>
+		<add key="SendMailFromName" value=""/>
+		<add key="SendMailSubject" value="AutoValidation Email Allert"/>
+
+		<add key="SMTPHostname" value=""/>
+		<add key="SMTPPort" value="0"/>
+		<add key="SMTPUsername" value=""/>
+		<add key="SMTPPassword" value=""/>
+		<add key="SMTPUseSSL" value="0"/>
+
+		<!--Log Configuration-->
+		<add key="LogTelnetPort" value=""/>
+		<add key="LogFileEnabled" value="1"/>
+	</appSettings>
+
+</configuration>
